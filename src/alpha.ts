@@ -21,9 +21,6 @@ const ConfiguredFrontmatterAddon = () => {
   if (frontmatterConfig) {
     props.title = frontmatterConfig.getOptionalString('title');
     props.render = frontmatterConfig.getOptionalBoolean('render');
-    props.variant = frontmatterConfig.getOptionalString('variant') as
-      | FrontmatterAddonProps['variant']
-      | undefined;
     props.include = frontmatterConfig.getOptionalStringArray('include');
     props.exclude = frontmatterConfig.getOptionalStringArray('exclude');
     props.labels = frontmatterConfig.getOptional<Record<string, string>>('labels');

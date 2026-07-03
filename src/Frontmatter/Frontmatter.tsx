@@ -68,24 +68,6 @@ const styles = `
   overflow-wrap: anywhere;
   white-space: pre-wrap;
 }
-
-.techdocs-frontmatter--table .techdocs-frontmatter__list {
-  display: grid;
-  gap: 0;
-}
-
-.techdocs-frontmatter--table .techdocs-frontmatter__row {
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: minmax(10rem, 14rem) 1fr;
-  padding: 0.45rem 0;
-}
-
-.techdocs-frontmatter--table .techdocs-frontmatter__row::after {
-  content: "";
-  margin-left: 0;
-}
 `;
 
 const ensureStyles = (sourceElement: Element) => {
@@ -150,9 +132,8 @@ const renderFrontmatter = (
     return;
   }
 
-  const variant = props.variant === 'table' ? 'table' : 'learn';
   sourceElement.hidden = false;
-  sourceElement.className = `techdocs-frontmatter techdocs-frontmatter--${variant}`;
+  sourceElement.className = 'techdocs-frontmatter';
   sourceElement.setAttribute('aria-label', props.title ?? 'Article metadata');
   sourceElement.innerHTML = '';
 
@@ -195,7 +176,6 @@ export const FrontmatterAddon = (props: FrontmatterAddonProps) => {
       JSON.stringify({
         title: props.title ?? null,
         render: props.render ?? null,
-        variant: props.variant ?? null,
         include: props.include ?? null,
         exclude: props.exclude ?? null,
         labels: props.labels ?? null,
@@ -205,7 +185,6 @@ export const FrontmatterAddon = (props: FrontmatterAddonProps) => {
     [
       props.title,
       props.render,
-      props.variant,
       props.include,
       props.exclude,
       props.labels,

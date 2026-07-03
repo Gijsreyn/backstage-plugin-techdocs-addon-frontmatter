@@ -27,7 +27,7 @@ export default createApp({
 import { Frontmatter } from 'backstage-plugin-techdocs-addon-frontmatter';
 
 <TechDocsAddons>
-  <Frontmatter title="Article metadata" variant="learn" />
+  <Frontmatter title="Article metadata" />
 </TechDocsAddons>
 ```
 
@@ -157,7 +157,6 @@ techdocs:
     frontmatter:
       title: Article metadata
       render: true
-      variant: learn # learn or table
       include: [type, last_review_date]
       labels:
         type: Type

@@ -16,13 +16,6 @@ export interface Config {
         render?: boolean;
 
         /**
-         * Display style for the metadata block.
-         * Supported values: learn, table.
-         * @default learn
-         */
-        variant?: string;
-
-        /**
          * Only render these frontmatter keys, in this order.
          */
         include?: string[];
