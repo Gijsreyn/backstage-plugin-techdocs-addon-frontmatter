@@ -47,6 +47,9 @@ jobs:
           publish: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Reclaim workspace ownership from container actions
+        if: ${{ steps.release.outputs.id != '' }}
+        run: sudo chown -R "$(id -u):$(id -g)" "$GITHUB_WORKSPACE"
       - name: Prepend release notes to CHANGELOG.md
         if: ${{ steps.release.outputs.id != '' }}
         shell: bash
@@ -67,9 +70,11 @@ jobs:
             printf '%s\n' "${RELEASE_BODY}"
             echo
             if [ -f CHANGELOG.md ]; then
-              # Drop the existing top-level "# Changelog" heading (and its trailing blank line)
-              # to avoid duplicating it after prepending the new section.
-              awk 'BEGIN{skipped=0} /^# Changelog$/ && skipped==0 {skipped=1; next} skipped==1 && /^$/ {skipped=2; next} {print}' CHANGELOG.md
+              # Keep only the existing release sections (lines from the first
+              # `## ` heading onward). Anything above -- the `# Changelog`
+              # heading, an intro paragraph, stray blank lines -- is dropped
+              # so it can't accumulate at the bottom on every release.
+              awk '/^## / {found=1} found {print}' CHANGELOG.md
             fi
           } > "${tmp}"
           mv "${tmp}" CHANGELOG.md
