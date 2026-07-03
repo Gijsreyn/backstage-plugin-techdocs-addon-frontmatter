@@ -47,6 +47,9 @@ jobs:
           publish: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Reclaim workspace ownership from container actions
+        if: ${{ steps.release.outputs.id != '' }}
+        run: sudo chown -R "$(id -u):$(id -g)" "$GITHUB_WORKSPACE"
       - name: Prepend release notes to CHANGELOG.md
         if: ${{ steps.release.outputs.id != '' }}
         shell: bash
