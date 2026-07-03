@@ -33,8 +33,14 @@ exclude-labels:
   - skip-changelog
 
 template: |
-  ## Changes
-
   $CHANGES
+
+  ---
+
+  **Install**
+
+  ```sh
+  yarn add backstage-plugin-techdocs-addon-frontmatter@$RESOLVED_VERSION
+  ```
 
   **Full changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION
