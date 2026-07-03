@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=82", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mkdocs-techdocs-frontmatter"
+version = "0.1.0"
+description = "Python-Markdown extension that renders TechDocs page frontmatter as searchable metadata."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.14"
+authors = [
+  { name = "Gijs Reijn" },
+]
+keywords = ["mkdocs", "mkdocs-plugin", "techdocs", "backstage", "frontmatter"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Documentation",
+  "Topic :: Software Development :: Documentation",
+]
+dependencies = [
+  "Markdown>=3.4",
+  "mkdocs>=1.6",
+  "PyYAML>=6.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/Gijsreyn/backstage-plugin-techdocs-addon-frontmatter"
+Repository = "https://github.com/Gijsreyn/backstage-plugin-techdocs-addon-frontmatter"
+Issues = "https://github.com/Gijsreyn/backstage-plugin-techdocs-addon-frontmatter/issues"
+
+[project.entry-points."mkdocs.plugins"]
+techdocs-frontmatter = "mkdocs_techdocs_frontmatter.plugin:TechDocsFrontmatterPlugin"
+
+[tool.setuptools.packages.find]
+where = ["src"]

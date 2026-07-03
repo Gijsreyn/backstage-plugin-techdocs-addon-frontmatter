@@ -1,0 +1,17 @@
+site_name: Frontmatter Addon Sample Docs
+site_description: Sample docs for backstage-plugin-techdocs-addon-frontmatter
+
+nav:
+  - Home: index.md
+  - How-To: how-to.md
+
+plugins:
+  - techdocs-core
+  - techdocs-frontmatter:
+      title: Article metadata
+      render: true
+      include: [type, author, last_review_date]
+      labels:
+        type: Type
+        author: Author
+        last_review_date: Last reviewed

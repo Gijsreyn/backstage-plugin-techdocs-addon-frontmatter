@@ -1,0 +1,14 @@
+dist/
+dist-types/
+node_modules/
+.idea/
+app-config.yaml
+.npmrc
+.yarn/install-state.gz
+
+# Python (mkdocs-extension)
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+build/
