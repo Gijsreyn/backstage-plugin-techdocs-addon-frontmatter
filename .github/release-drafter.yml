@@ -1,0 +1,40 @@
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+
+# Use the version supplied by the workflow (from package.json) instead of
+# guessing from labels. `version:` on the action call wins over this.
+version-resolver:
+  default: patch
+
+categories:
+  - title: '🚀 Features'
+    labels:
+      - feature
+      - enhancement
+  - title: '🐛 Bug Fixes'
+    labels:
+      - fix
+      - bugfix
+      - bug
+  - title: '📝 Documentation'
+    labels:
+      - documentation
+      - docs
+  - title: '🧰 Maintenance'
+    labels:
+      - chore
+      - dependencies
+      - refactor
+
+change-template: '- $TITLE (#$NUMBER) @$AUTHOR'
+change-title-escapes: '\<*_&'
+
+exclude-labels:
+  - skip-changelog
+
+template: |
+  ## Changes
+
+  $CHANGES
+
+  **Full changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION

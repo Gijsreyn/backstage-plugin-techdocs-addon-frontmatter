@@ -1,25 +1,89 @@
-name: Publish Package to npmjs
+name: Release
+
 on:
-  release:
-    types: [created]
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
 jobs:
-  build:
+  release:
+    # prevent this action from running on forks
+    if: github.repository == 'Gijsreyn/backstage-plugin-techdocs-addon-frontmatter'
+    permissions:
+      contents: write
+      pull-requests: read
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Enable Corepack
         run: corepack enable
-      # Setup .npmrc file to publish to npm
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: '26.x'
           cache: yarn
           registry-url: 'https://registry.npmjs.org'
       - run: yarn install --immutable
       - run: yarn tsc:full
       - run: yarn build
-      - name: Setup .yarnrc.yml file to allow publication to https://registry.npmjs.org with a 'yarn npm publish'
+      - name: Extract version from package.json
+        id: version
+        shell: bash
+        run: echo "value=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+      - name: Get latest tag
+        id: get-latest-tag
+        uses: actions-ecosystem/action-get-latest-tag@v1
+        with:
+          semver_only: false
+        continue-on-error: true
+      - name: Publish GitHub Release
+        id: release
+        if: ${{ !contains(steps.get-latest-tag.outputs.tag, steps.version.outputs.value) }}
+        uses: release-drafter/release-drafter@v6
+        with:
+          version: ${{ steps.version.outputs.value }}
+          publish: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Prepend release notes to CHANGELOG.md
+        if: ${{ steps.release.outputs.id != '' }}
+        shell: bash
+        env:
+          RELEASE_NAME: ${{ steps.release.outputs.name }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag_name }}
+          RELEASE_URL: ${{ steps.release.outputs.html_url }}
+          RELEASE_BODY: ${{ steps.release.outputs.body }}
+        run: |
+          set -euo pipefail
+          release_date=$(date -u +%Y-%m-%d)
+          tmp=$(mktemp)
+          {
+            echo "# Changelog"
+            echo
+            echo "## [${RELEASE_NAME:-$RELEASE_TAG}](${RELEASE_URL}) - ${release_date}"
+            echo
+            printf '%s\n' "${RELEASE_BODY}"
+            echo
+            if [ -f CHANGELOG.md ]; then
+              # Drop the existing top-level "# Changelog" heading (and its trailing blank line)
+              # to avoid duplicating it after prepending the new section.
+              awk 'BEGIN{skipped=0} /^# Changelog$/ && skipped==0 {skipped=1; next} skipped==1 && /^$/ {skipped=2; next} {print}' CHANGELOG.md
+            fi
+          } > "${tmp}"
+          mv "${tmp}" CHANGELOG.md
+      - name: Commit CHANGELOG.md
+        if: ${{ steps.release.outputs.id != '' }}
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: update CHANGELOG for ${{ steps.release.outputs.tag_name }} [skip ci]"
+          file_pattern: CHANGELOG.md
+      - name: Configure Yarn npm auth
+        if: ${{ !contains(steps.get-latest-tag.outputs.tag, steps.version.outputs.value) }}
         shell: bash
         run: |
           echo "npmAuthToken: ${{ secrets.NPM_TOKEN }}" >> ~/.yarnrc.yml
-      - run: yarn npm publish
+      - name: Publish to npm
+        if: ${{ !contains(steps.get-latest-tag.outputs.tag, steps.version.outputs.value) }}
+        run: yarn npm publish
