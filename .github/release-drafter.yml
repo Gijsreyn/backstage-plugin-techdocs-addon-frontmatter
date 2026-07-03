@@ -33,7 +33,7 @@ exclude-labels:
   - skip-changelog
 
 template: |
-  ## Changes
+  ### Changes
 
   $CHANGES
 
